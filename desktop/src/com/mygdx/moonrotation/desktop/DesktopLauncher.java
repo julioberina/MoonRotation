@@ -7,8 +7,8 @@ import com.mygdx.moonrotation.MoonRotation;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-                config.width = 1366;
-                config.height = 768;
+                config.width = 1400;
+                config.height = 800;
                 config.title = "Moon Rotation";
 		new LwjglApplication(new MoonRotation(), config);
 	}
