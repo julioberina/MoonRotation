@@ -132,9 +132,9 @@ public class MoonRotation extends ApplicationAdapter {
                 // Setting default positions of actors on the stage
                 arr = stage.getActors();               
                 arr.get(0).setX((float)1280);
-                arr.get(0).setY((float)30);
+                arr.get(0).setY((float)70);
                 arr.get(1).setX((float)1280);
-                arr.get(1).setY((float)55);
+                arr.get(1).setY((float)30);
 	}
 
         @Override

@@ -9,6 +9,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
                 config.width = 1400;
                 config.height = 800;
+                config.resizable = false;
                 config.title = "Moon Rotation";
 		new LwjglApplication(new MoonRotation(), config);
 	}
