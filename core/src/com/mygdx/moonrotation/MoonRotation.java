@@ -43,7 +43,7 @@ public class MoonRotation extends ApplicationAdapter {
         
         // Variables for moon rotation
         int phase = 0;
-        int stall = 0; // if time is stopped
+        long stall = 0; // if time is stopped
         int timesStarted = 0;
         double angle = phase * Math.PI / 180.0;
         String moonimg = ".png";
@@ -137,6 +137,13 @@ public class MoonRotation extends ApplicationAdapter {
                 arr.get(1).setY((float)55);
 	}
 
+        @Override
+        public void dispose() {
+            task.cancel();
+            timer.cancel();
+            timer.purge();
+        }
+        
 	@Override
 	public void render () {
                 // Changing moon image based on current phase
