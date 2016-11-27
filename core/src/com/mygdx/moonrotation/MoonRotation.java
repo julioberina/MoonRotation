@@ -43,7 +43,7 @@ public class MoonRotation extends ApplicationAdapter {
         
         // Variables for moon rotation
         int phase = 0;
-        long stall = 0; // if time is stopped
+        int stall = 0; // if time is stopped
         int timesStarted = 0;
         double angle = phase * Math.PI / 180.0;
         String moonimg = ".png";
@@ -51,12 +51,15 @@ public class MoonRotation extends ApplicationAdapter {
         Texture moonTexture;
         Image moon;
         
+        // Variable for background animation
+        int space_fr = 0;
+        
         // Setting the timer and its variables
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override
             public void run()
-            {   
+            {
                 if (rotating)
                 {
                     stall = 0;
@@ -75,11 +78,11 @@ public class MoonRotation extends ApplicationAdapter {
 	@Override
 	public void create () {
                 // Setting background image
-                backgroundTexture = new TextureRegion(new Texture("space.jpg"), 0, 0, 1400, 800);
+                backgroundTexture = new TextureRegion(new Texture("spacepngs/frame_0_delay-0.1s.jpg"), 0, 0, 1280, 630);
                 batch = new SpriteBatch();
                 
                 // Setting up the stage
-                stage = new Stage(new StretchViewport(1400, 800));
+                stage = new Stage(new StretchViewport(1280, 630));
                 Gdx.input.setInputProcessor(stage);
                 font = new BitmapFont();
                 
@@ -131,9 +134,9 @@ public class MoonRotation extends ApplicationAdapter {
 
                 // Setting default positions of actors on the stage
                 arr = stage.getActors();               
-                arr.get(0).setX((float)1280);
-                arr.get(0).setY((float)70);
-                arr.get(1).setX((float)1280);
+                arr.get(0).setX((float)1160);
+                arr.get(0).setY((float)55);
+                arr.get(1).setX((float)1160);
                 arr.get(1).setY((float)30);
 	}
 
@@ -152,9 +155,17 @@ public class MoonRotation extends ApplicationAdapter {
                 float moon_x = (float)Math.cos(angle);
                 float moon_y = (float)Math.sin(angle);
                 
+                // Change background frame
+                if (space_fr >= 69)
+                    space_fr = 0;
+                
+                String imageFile = "spacepngs/frame_" + (space_fr++ / 3) + "_delay-0.1s.jpg";
+                backgroundTexture = new TextureRegion(new Texture(imageFile), 0, 0, 1280, 630);
+                
                 batch.begin();
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+                
                 batch.draw(backgroundTexture, 0, 0);
                 batch.draw(imgTexture, 550, 275);
                 batch.draw(moonTexture, 650 + (350*moon_x), 365 + (350*moon_y));
