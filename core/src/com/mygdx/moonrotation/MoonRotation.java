@@ -16,8 +16,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.utils.Array;
-import java.util.Timer;
-import java.util.TimerTask;
+import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Timer.Task;
 
 public class MoonRotation extends ApplicationAdapter {
         // Setting the stage
@@ -44,11 +44,10 @@ public class MoonRotation extends ApplicationAdapter {
         // Variables for moon rotation
         int phase = 0;
         int cycle = 0; // Earth
-        int stall = 0; // if time is stopped
-        int timesStarted = 0;
         double angle = phase * Math.PI / 180.0;
         String moonimg = ".png";
-        boolean rotating = false; // earth variable as well as a moon variable
+        boolean started = false; // earth variable as well as a moon variable
+        boolean stopped = false;
         Texture moonTexture;
         Image moon;
         
@@ -56,33 +55,6 @@ public class MoonRotation extends ApplicationAdapter {
         int space_fr = 0;
         
         // Setting the timer and its variables
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run()
-            {
-                if (rotating)
-                {
-                    stall = 0;
-                    // Earth
-                    if (cycle < 22)
-                        cycle++;
-                    else
-                        cycle = 0;
-                    
-                    // Moon
-                    if (phase < 29)
-                        phase++;
-                    else
-                        phase = 0;
-                    
-                    angle = phase * 12.0 * Math.PI / 180.0;
-                }
-                else
-                    stall++;
-            }
-        };
-        
 	@Override
 	public void create () {
                 // Setting background image
@@ -116,12 +88,39 @@ public class MoonRotation extends ApplicationAdapter {
                 startButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                        rotating = true;
-                        ++timesStarted;
-                        if (timesStarted < 2)
+                        if (started == false)
                         {
-                            timer.scheduleAtFixedRate(task, 0, 100);
-                            task.run();
+                            started = true;
+                            stopped = false;
+                            Timer.instance().schedule(
+                                    new Task()
+                                    {
+                                        @Override
+                                        public void run() {
+                                            // Earth
+                                            if (cycle < 22)
+                                                cycle++;
+                                            else
+                                                cycle = 0;
+                                            
+                                            // Moon
+                                            if (phase < 29)
+                                                phase++;
+                                            else
+                                                phase = 0;
+                                            
+                                            angle = phase * 12.0 * Math.PI / 180.0;
+                                        }
+                                    }
+                                    , 0, 0.1f);
+                        }
+                        else
+                        {
+                            if (stopped)
+                            {
+                                stopped = false;
+                                Timer.instance().start();
+                            }
                         }
                     };
                 });
@@ -130,7 +129,11 @@ public class MoonRotation extends ApplicationAdapter {
                 stopButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                        rotating = false;
+                        if (started && stopped == false)
+                        {
+                            stopped = true;
+                            Timer.instance().stop();
+                        }
                     };
                 });
 
@@ -150,9 +153,9 @@ public class MoonRotation extends ApplicationAdapter {
 
         @Override
         public void dispose() {
-            task.cancel();
-            timer.cancel();
-            timer.purge();
+            if (stopped == false)
+                Timer.instance().stop();
+            Timer.instance().clear();
         }
         
 	@Override
