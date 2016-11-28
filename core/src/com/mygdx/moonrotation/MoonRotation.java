@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -34,12 +33,11 @@ public class MoonRotation extends ApplicationAdapter {
         
         // Setting up background
         BitmapFont font;
-        TextureRegion backgroundTexture;
+        Array<TextureRegion> backgroundTexture;
         SpriteBatch batch;
         
         // Adding the Earth image
-        Texture imgTexture;
-        Image earth;
+        Array<Texture> imgTexture;
         
         // Variables for moon rotation
         int phase = 0;
@@ -48,8 +46,7 @@ public class MoonRotation extends ApplicationAdapter {
         String moonimg = ".png";
         boolean started = false; // earth variable as well as a moon variable
         boolean stopped = false;
-        Texture moonTexture;
-        Image moon;
+        Array<Texture> moonTexture;
         
         // Variable for background animation
         int space_fr = 0;
@@ -58,7 +55,10 @@ public class MoonRotation extends ApplicationAdapter {
 	@Override
 	public void create () {
                 // Setting background image
-                backgroundTexture = new TextureRegion(new Texture("spacepngs/frame_0_delay-0.1s.jpg"), 0, 0, 1280, 630);
+                backgroundTexture = new Array<TextureRegion>();
+                backgroundTexture.setSize(23);
+                for (int i = 0; i < 23; i++)
+                    backgroundTexture.set(i, new TextureRegion(new Texture("spacepngs/frame_" + i + "_delay-0.1s.jpg"), 0, 0, 1280, 630));
                 batch = new SpriteBatch();
                 
                 // Setting up the stage
@@ -77,8 +77,16 @@ public class MoonRotation extends ApplicationAdapter {
                 stopButton = new TextButton("Stop Rotation", stopButtonStyle);
                 
                 // Moon code
-                imgTexture = new Texture("earthpngs/frame_0_delay-0.1s.gif");
-                earth = new Image(imgTexture);
+                moonTexture = new Array<Texture>();
+                moonTexture.setSize(30);
+                for (int i = 0; i < 30; i++)
+                    moonTexture.set(i, new Texture(i + moonimg));
+                
+                // Earth code
+                imgTexture = new Array<Texture>();
+                imgTexture.setSize(24);
+                for (int i = 0; i < 24; i++)
+                    imgTexture.set(i, new Texture("earthpngs/frame_" + i + "_delay-0.1s.gif"));
                 
                 // Adding "actors" to the "stage"
                 stage.addActor(startButton);
@@ -161,29 +169,20 @@ public class MoonRotation extends ApplicationAdapter {
 	@Override
 	public void render () {
                 // Changing moon image based on current phase
-                moonTexture = new Texture(phase + moonimg);
-                moon = new Image(moonTexture);
                 float moon_x = (float)Math.cos(angle);
                 float moon_y = (float)Math.sin(angle);
-                
-                // Changing Earth image based on thread
-                imgTexture = new Texture("earthpngs/frame_" + cycle + "_delay-0.1s.gif");
-                earth = new Image(imgTexture);
                 
                 // Change background frame
                 if (space_fr >= 69)
                     space_fr = 0;
                 
-                String imageFile = "spacepngs/frame_" + (space_fr++ / 3) + "_delay-0.1s.jpg";
-                backgroundTexture = new TextureRegion(new Texture(imageFile), 0, 0, 1280, 630);
-                
                 batch.begin();
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
                 
-                batch.draw(backgroundTexture, 0, 0);
-                batch.draw(imgTexture, 600, 250);
-                batch.draw(moonTexture, 650 + (250*moon_x), 285 + (250*moon_y));
+                batch.draw(backgroundTexture.get(space_fr++ / 3), 0, 0);
+                batch.draw(imgTexture.get(cycle), 600, 250);
+                batch.draw(moonTexture.get(phase), 650 + (250*moon_x), 285 + (250*moon_y));
                 batch.end();
                 stage.draw();
 	}
