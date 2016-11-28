@@ -43,11 +43,12 @@ public class MoonRotation extends ApplicationAdapter {
         
         // Variables for moon rotation
         int phase = 0;
+        int cycle = 0; // Earth
         int stall = 0; // if time is stopped
         int timesStarted = 0;
         double angle = phase * Math.PI / 180.0;
         String moonimg = ".png";
-        boolean rotating = false;
+        boolean rotating = false; // earth variable as well as a moon variable
         Texture moonTexture;
         Image moon;
         
@@ -63,6 +64,13 @@ public class MoonRotation extends ApplicationAdapter {
                 if (rotating)
                 {
                     stall = 0;
+                    // Earth
+                    if (cycle < 22)
+                        cycle++;
+                    else
+                        cycle = 0;
+                    
+                    // Moon
                     if (phase < 29)
                         phase++;
                     else
@@ -97,7 +105,7 @@ public class MoonRotation extends ApplicationAdapter {
                 stopButton = new TextButton("Stop Rotation", stopButtonStyle);
                 
                 // Moon code
-                imgTexture = new Texture("earth.png");
+                imgTexture = new Texture("earthpngs/frame_0_delay-0.1s.gif");
                 earth = new Image(imgTexture);
                 
                 // Adding "actors" to the "stage"
@@ -155,6 +163,10 @@ public class MoonRotation extends ApplicationAdapter {
                 float moon_x = (float)Math.cos(angle);
                 float moon_y = (float)Math.sin(angle);
                 
+                // Changing Earth image based on thread
+                imgTexture = new Texture("earthpngs/frame_" + cycle + "_delay-0.1s.gif");
+                earth = new Image(imgTexture);
+                
                 // Change background frame
                 if (space_fr >= 69)
                     space_fr = 0;
@@ -167,8 +179,8 @@ public class MoonRotation extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
                 
                 batch.draw(backgroundTexture, 0, 0);
-                batch.draw(imgTexture, 550, 275);
-                batch.draw(moonTexture, 650 + (350*moon_x), 365 + (350*moon_y));
+                batch.draw(imgTexture, 600, 250);
+                batch.draw(moonTexture, 650 + (250*moon_x), 285 + (250*moon_y));
                 batch.end();
                 stage.draw();
 	}
