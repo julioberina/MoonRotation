@@ -164,6 +164,10 @@ public class MoonRotation extends ApplicationAdapter {
             if (stopped == false)
                 Timer.instance().stop();
             Timer.instance().clear();
+            
+            batch.dispose();
+            font.dispose();
+            stage.dispose();
         }
         
 	@Override
